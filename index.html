@@ -23,10 +23,11 @@
     }
 
     .container {
+      margin-top: 20px;
       width: 80%;
       max-width: 600px;
       border: 2px solid #00ff00;
-      padding: 20px;
+      
       text-align: left;
       box-shadow: 0 0 10px #00ff00;
     }
@@ -55,6 +56,10 @@
 
     .user-message {
       color: #ffcc00;
+    }
+
+    .bot-message {
+      color: #00ff00;
     }
 
     .input-container {
@@ -97,6 +102,29 @@
       animation: blink 1s steps(2, start) infinite;
     }
 
+    .history, .system-stats {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #222;
+      border: 2px solid #00ff00;
+      color: #00ff00;
+      width: 100%;
+  
+    }
+
+    .history ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .history li {
+      margin: 5px 0;
+    }
+
+    .system-stats div {
+      margin: 5px 0;
+    }
+
     @keyframes blink {
       50% {
         background-color: transparent;
@@ -116,17 +144,51 @@
     </div>
   </div>
 
+  <div class="history" id="history">
+    <h3>Message History</h3>
+    <ul id="message-history"></ul>
+  </div>
+
+  <div class="system-stats">
+    <h3>System Info</h3>
+    <div id="bytes-used">Bytes Used: 0 KB</div>
+    <div id="response-time">Response Time: 0ms</div>
+    <div id="messages-sent">Messages Sent: 0</div>
+  </div>
+
   <script>
+    let messageCount = 0;
+    let totalBytes = 0;
+
     const chatWindow = document.getElementById('chat-window');
+    const messageHistory = document.getElementById('message-history');
+    const bytesUsed = document.getElementById('bytes-used');
+    const responseTimeDisplay = document.getElementById('response-time');
+    const messagesSentDisplay = document.getElementById('messages-sent');
 
     function sendMessage() {
       const input = document.getElementById('user-input');
       const userMessage = input.value.trim();
 
       if (userMessage) {
+        messageCount++;
+        const startTime = Date.now();
         appendMessage(`You: ${userMessage}`, 'user-message');
         input.value = '';
-        setTimeout(() => appendMessage(`ChatGPT: ${getBotResponse(userMessage)}`, 'bot-message'), 1000);
+        
+        // Simulate message processing
+        setTimeout(() => {
+          const botResponse = getBotResponse(userMessage);
+          const endTime = Date.now();
+          
+          // Update response time and stats
+          const responseTime = endTime - startTime;
+          totalBytes += botResponse.length + userMessage.length;
+          
+          appendMessage(`ChatGPT: ${botResponse}`, 'bot-message');
+          updateSystemStats(responseTime);
+          addToHistory(userMessage, botResponse);
+        }, 1000);
       }
     }
 
@@ -139,7 +201,19 @@
     }
 
     function getBotResponse(input) {
-      return "Hello,I am the first bot that chats with people!";
+      return "Hello, I am the first bot that chats with people!";
+    }
+
+    function updateSystemStats(responseTime) {
+      bytesUsed.textContent = `Bytes Used: ${Math.round(totalBytes / 1024)} KB`;
+      responseTimeDisplay.textContent = `Response Time: ${responseTime}ms`;
+      messagesSentDisplay.textContent = `Messages Sent: ${messageCount}`;
+    }
+
+    function addToHistory(userMessage, botResponse) {
+      const historyItem = document.createElement('li');
+      historyItem.textContent = `You: ${userMessage} - ChatGPT: ${botResponse}`;
+      messageHistory.appendChild(historyItem);
     }
   </script>
 </body>
