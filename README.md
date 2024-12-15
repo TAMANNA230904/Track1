@@ -6,6 +6,7 @@ and retro elements.***
 # 🔥 Features 🔥
 ## 🖥️ Retro Look and Feel: Green-on-black terminal interface with flashing cursor.
 ## 📱 Responsive Design: Works across devices and maintains the retro theme.
+## 🖥️Displays chat stats and message history to the user.
 
 # Technologies Used
 
